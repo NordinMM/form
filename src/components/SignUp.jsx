@@ -28,7 +28,11 @@ export const SignUp = ({ handleData }) => {
     }
     return null; // If no error is found, return null
   }
-
+  function getInvalidDniError(dni) {
+    if (!/^[0-9]{8}[A-Z]$/i.test(dni)) {
+      return "Your ID card number must contain 7 digits and a final letter.";
+    }
+  }
   const [showPassword, setShowPassword] = useState(false);
 
   /* register your input into the hook by invoking the "register" function */
@@ -46,7 +50,7 @@ export const SignUp = ({ handleData }) => {
     handleData(data);
     console.log(data);
   };
-
+  const dniPattern = /[X-Z]{1}([-]?)(\d{7})([-]?)([A-Z]{1})|(\d{8})([-]?)([A-Z]{1})/gm;
   // console.log(watch("example")); // watch input value by passing the name of it
 
   return (
@@ -91,7 +95,25 @@ export const SignUp = ({ handleData }) => {
                 required: true,
                 validate: getInvalidPasswordError,
               })}
+
             />
+            <div className="flex flex-col gap-2">
+              <label className="label-text">DNI</label>
+              <input size="9"  maxLength="9"
+                className={`input input-md input-bordered  ${
+                  errors.dni ? "input-error" : ""
+                }`}
+                placeholder="Y4653782X-45678912A"
+                {...register("dni", {
+                  //This is the validation
+                  required: true,
+                  pattern: getInvalidDniError,
+                })}
+              />
+              {errors.dni?.type == "pattern" && (
+            <span className="text-error"> {errors.dni.message} </span>
+          )}
+            </div>
             <button
               className="absolute top-3 right-5 cursor-pointer"
               onClick={() => setShowPassword(!showPassword)}
